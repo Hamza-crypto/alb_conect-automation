@@ -9,8 +9,6 @@ import datetime
 import requests
 
 BASE_URL = "https://www.albconnect.com.au/storefront/sga/en/AUD"
-username = "rkse05@gmail.com"
-password = "ABCD123"
 
 data = open("config.txt", "r")
 for x in data:
