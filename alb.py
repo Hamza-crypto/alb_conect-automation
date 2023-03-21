@@ -12,6 +12,18 @@ BASE_URL = "https://www.albconnect.com.au/storefront/sga/en/AUD"
 username = "rkse05@gmail.com"
 password = "ABCD123"
 
+data = open("config.txt", "r")
+for x in data:
+    if 'download_path' in x:
+        download_path = x.replace('download_path = ', '').replace('\n', '')
+    if 'username' in x:
+        username = x.replace('username = ', '').replace('\n', '')
+    if 'password' in x:
+        password = x.replace('password = ', '').replace('\n', '')
+    if 'start_date' in x:
+        start_date = x.replace('start_date = ', '').replace('\n', '')
+    if 'end_date' in x:
+        end_date = x.replace('end_date = ', '').replace('\n', '')
 
 def getDates():
     today = datetime.date.today()
@@ -26,7 +38,7 @@ def getDates():
         last_month = last_month.strftime("%d/%m/%Y")
         today = today.strftime("%d/%m/%Y")
 
-    return today, last_month
+    return last_month, today
 
 
 def getOrderInfo(page):
@@ -102,12 +114,16 @@ with sync_playwright() as playwright:
     login(page, context)
     time.sleep(2)
 
-    today, last_month = getDates()
+    last_month, today = getDates()
+    if 'start_date' not in locals():
+        start_date = last_month
+    if 'end_date' not in locals():
+        end_date = today
 
     orderPages = []
 
     for x in range(50):
-        page.goto(BASE_URL + '/my-account/orders?startDate=' + last_month + '&endDate=' + today + '&page=' + str(x))
+        page.goto(BASE_URL + '/my-account/orders?startDate=' + start_date + '&endDate=' + end_date + '&page=' + str(x))
         time.sleep(5)
 
         table = page.query_selector("tbody")
@@ -141,8 +157,6 @@ with sync_playwright() as playwright:
                                                      "Payment Method", "Delivery Date", "Product No", "Product Name",
                                                      "Item Price", "Item Status", "Item Quantity", "Invoiced Quantity",
                                                      "Total Amount"])
-    productsOrders.to_csv(str(time.time()) + ".csv", index=False)
-    time.sleep(2)
-    productsOrders.to_csv(str(time.time()) + ".csv", sep='|', index=False)
+    productsOrders.to_csv(download_path + "/" + str(time.time()) + ".csv", sep='|', index=False)
 
 print('Completed')
