@@ -70,9 +70,7 @@ def getOrderInfo(page):
             itemPrice = productInfo[1].text.replace('Item price:', '').replace('\n', '').replace('  ', '').strip()
             itemStatus = productInfo[2].find('span', {'class': 'qtyValue'}).text.replace('\n', '').strip()
             itemQuantity = productInfo[3].find('span', {'class': 'qtyValue'}).text.replace('\n', '').strip()
-            invoicedQuantity = productInfo[4].find('span', {'class': 'qtyValue'})
-            if invoicedQuantity:
-                invoicedQuantity = invoicedQuantity.text.replace('\n', '').strip()
+            invoicedQuantity = productInfo[4].text.replace('Invoiced Quantity:', '').replace('\n', '').strip()
             totalAmount = productInfo[5].text.replace('Total:', '').replace('\n', '').strip()
             # print(productNo)
             # print(productName)
